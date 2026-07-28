@@ -125,7 +125,7 @@ def efficient_frontier(mean_returns,cov_matrix, n_points=100):
 
 	min_w,min_ret,min_vol=minimum_variance_portfolio(mean_returns,cov_matrix)
 	max_ret=mean_returns.max()
-	target_rets=np.linspace(min_ret,max_ret,n_points):
+	target_rets=np.linspace(min_ret,max_ret,n_points)
 	frontier_vols=[]
 
 	for target in target_rets:
@@ -153,7 +153,86 @@ def monte_carlo_sim(optimal_weights,log_returns,initial_value=10000,n_simulation
 
 	np.random.seed(42)
 	daily_cov=log_returns.cov()
-	
+	simulation_results=np.zeros((n_days,n_simulations))
+
+	for sim in range(n_simulations):
+		daily_returns=np.random.multivariate_normal(mean=log_returns.mean(),cov=daily_cov,size=n_days)
+		portfolio_daily=daily_returns @ optimal_weights
+		price_path= initial_value * np.exp(np.cumsum(portfolio_daily))
+		simulation_results[:,sim] = price_path
+
+	historical_port_returns = log_rteurns @ optimal_weights
+	var_hist = np.percentile(historical_port_returns,5)
+	cvar_hist = historical_port_returns[historical_port_returns <= var_hist].mean()
+
+	mu=historical_port_returns.mean()
+	sigma=historical_port_returns.std()
+	var_parametric = stats.norm.ppf(0.047,mu,sigma)
+
+	return (simulation_results, var_hist, cvar_hist,var_parametric,historical_port_returns)
+
+def plot_analysis(tickers, prices,log_returns,mean_returns,cov_matrix,min_weights,max_weights,frontier_returns,frontier_vols,
+	simulation_results,var_hist,cvar_hist,historical_port_returns, risk_free_rate=0.047,initial_value=10000):
+	"""
+	Produce four-pnel summary visual of the full analysis
+	"""
+
+	fig,axes=plt.subplots(2,2,figsize=(18,12))
+	fig.suptitle('Portfolio Optimization Analysis', fontsize=16,fontweight='bold')
+
+	#Normalized price history
+	ax1 = axes[0,0]
+	(prices/prices.iloc[0]*100).plt(ax=ax1)
+	ax1.set_title('Panel 1: Normalized Price History (Base 100)')
+	ax1.set_xlabel('Date')
+	ax1.set_ylabel('Indexed Price')
+	ax1.legend(fontsize=8)
+	ax1.grid(True)
+
+	#Correlation map
+	ax2 = axes[0,1]
+	sns.heatmap(log_returns.corr(), annot=True,fmt='.2f',cmap='coolwarm',center=0, ax=ax2)
+	ax2.set_title("Panel 2: Return Correlation Matrix")
+
+	#Efficient frontier
+	ax3=axes[1,0]
+	min_ret = np.dot(min_weights,mean_returns)
+	min_vol = np.sqrt(np.dot(min_weights.T,np.dot(cov_matrix,min_weights)))
+	max_ret = np.dot(max_weights,mean_returns)
+	max_vol = np.sqrt(np.dot(max_weights.T,np.dot(cov_matrix,max_weights)))
+	max_sharpe =(max_ret-risk_free_rate)/max_vol
+
+	ax3.plot(frontier_vols,frontier_returns,'-b',linewidth=2,label="Efficient Frontier")
+	ax3.scatter(min_vol,min_ret,marker="*",color='red',s=300,zorder=5,label="Min Variance")
+	ax3.scatter(max_vol,max_ret,marker="*",color="gold",s=300,zorder=5,label=f"Max Sharpe ({max_sharpe:.2f})")
+	cml_x=np.linspace(0,max_vol *1.5,100)
+	cml_y=risk_free_rate + max_sharpe * cml_x
+	ax3.plot(cml_x,cml_y,"r--",linewidth=1.5,label="Capital Market Line")
+	ax3.set_title("Panel 3: Efficient Frontier")
+	ax3.set_xlabel("Annualized Volatility")
+	ax3.set_ylabel("Annualized Expected Return")
+	ax3.legend(fontsize=8)
+	ax3.grid(True)
+
+	#Monte Carlo
+	ax4=axes[1,1]
+	ax4.plot(simulation_results,color="lightblue",alpha=0.5,linewidth=0.5)
+	ax4.plot(np.percentile(simulation_results,50,axis=1),color='blue',linewidth=2,label="Median")
+	ax4.plot(np.percentile(simulation_results,5,axis=1),color="red",linewidth=2,label="5th percentile")
+	ax4.plot(np.percentile(simulation_results,95,axis=1),color="orange",linewidth=2,label="95th percentile")
+	ax4.axhline(y=initial_value,color='black',linestyle="--",linewidth=1)
+	ax4.set_title("Panel 4: Monte Carlo Simulation (1 Year Forward)")
+	ax4.set_xlabel('Trading Days')
+	ax4.set_ylabel("Portfolio Value ($)")
+	ax4.legend(fontsize=8)
+	ax4.grid(True)
+
+	plt.tight_layout()
+	plt.savefig('portfolio_analysis_summary.png',dpi=150,bbox_inches="tight")
+	plt.show()
+	print("Chart saved as portfolio_analysis_summary.png")
+
+
 
 
 
