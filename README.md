@@ -1,6 +1,6 @@
 # Quantitative Portfolio Optimization Engine
 
-A python based portfolio analysis tool that implements Modern Portfolio Theory from mathematical first principles. Built as a structured quant finance self-study project over 4 weeks.
+A python based portfolio analysis tool that implements Modern Portfolio Theory from mathematical first principles. Built as a structured quant finance self-study project over 7 weeks.
 
 ## Overview
 This projects constructs an optimal multi-asset portfolio using Markowitz mean-variance optimization, traces the efficient frontier, identifies the max Sharpe ratio portfolio and stress-tests it using Monte Carlo forward simulation with Value at Risk and Conditional Value at Risk metrics.
