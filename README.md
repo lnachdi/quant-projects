@@ -49,7 +49,7 @@ date range in Cell 1:
 ```python
 TICKERS = ["AAPL", "MSFT", "GOOGL", "JPM", "GS"]
 START = "2020-01-01"
-END = "2024-01-01"
+END = "2026-07-01"
 RISK_FREE_RATE = 0.05
 INITIAL_VALUE = 10000
 ```
