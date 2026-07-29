@@ -39,7 +39,7 @@ def annualized_stats(log_returns):
 	cov_matrix = log_returns.cov() * 252
 	return mean_returns, cov_matrix
 
-def portfolio_preformance(weights,mean_returns,cov_matrix,risk_free_rate=0.047):
+def portfolio_performance(weights,mean_returns,cov_matrix,risk_free_rate=0.047):
 	"""
 	Computes annualized return, volatility, and Sharpe ratio for a portfolio
 
@@ -161,7 +161,7 @@ def monte_carlo_sim(optimal_weights,log_returns,initial_value=10000,n_simulation
 		price_path= initial_value * np.exp(np.cumsum(portfolio_daily))
 		simulation_results[:,sim] = price_path
 
-	historical_port_returns = log_rteurns @ optimal_weights
+	historical_port_returns = log_returns @ optimal_weights
 	var_hist = np.percentile(historical_port_returns,5)
 	cvar_hist = historical_port_returns[historical_port_returns <= var_hist].mean()
 
@@ -182,7 +182,7 @@ def plot_analysis(tickers, prices,log_returns,mean_returns,cov_matrix,min_weight
 
 	#Normalized price history
 	ax1 = axes[0,0]
-	(prices/prices.iloc[0]*100).plt(ax=ax1)
+	(prices/prices.iloc[0]*100).plot(ax=ax1)
 	ax1.set_title('Panel 1: Normalized Price History (Base 100)')
 	ax1.set_xlabel('Date')
 	ax1.set_ylabel('Indexed Price')
