@@ -27,3 +27,38 @@ The 95% VaR identifies the loss threshold exceeded on only 5% of days. CVaR (Exp
 ## Results
 ![Portfolio Analysis Summary](portfolio_analysis_summary.png)
 
+## Key Findings
+- The max Sharpe ratio portfolio allocated most heavily to GOOGL stock which reflected its risk-adjusted outperformance over the sample period
+- Daily returns showed negative excess kurtosis and fat tails which rejects normality (p<0.001) and caused the parametric VaR to overestimate tail risk relative to historical VaR
+- Monte Carlo simulation produced a 14.4% probability of loss over a one year period and a median terminal value of $16300 from the initial $10000 portfolio
+
+## Installation
+**1. Clone repository:**
+```bash
+git clone https://github.com/lnachdi/quant-projects.git
+cd quant-projects
+```
+**2. Install libraries**
+```bash
+pip install -r requirements.txt
+```
+**3. Run analysis**
+Open `portfolio_analysis.ipynb` in Jupyter and change the tickers and 
+date range in Cell 1:
+
+```python
+TICKERS = ["AAPL", "MSFT", "GOOGL", "JPM", "GS"]
+START = "2020-01-01"
+END = "2024-01-01"
+RISK_FREE_RATE = 0.05
+INITIAL_VALUE = 10000
+```
+Run all cells. The full analysis including charts and risk metrics generates 
+automatically.
+
+## Dependencies and References
+Mathematical references used: Blitzstein and Hwang, *Introduction to Probability*; Kopp and Capinski, *Portfolio Theory and Risk Management*; Markowitz, *Portfolio Selection*; Sharpe, *Mutual Fund Performance*.
+Libraries: pandas, numpy, matplotlib, scipy, yfinance, seaborn
+
+
+
