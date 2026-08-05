@@ -35,8 +35,8 @@ The 95% VaR identifies the loss threshold exceeded on only 5% of days. CVaR (Exp
 ## Installation
 **1. Clone repository:**
 ```bash
-git clone https://github.com/lnachdi/quant-projects.git
-cd quant-projects
+git clone https://github.com/lnachdi/portfolio-optimization-engine.git
+cd portfolio-optimization-engine
 ```
 **2. Install libraries**
 ```bash
